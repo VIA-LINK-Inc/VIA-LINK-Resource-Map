@@ -1,0 +1,14 @@
+# Visual Studio Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Node (future-proofing)
+node_modules/
+
+# Local environment files
+.env

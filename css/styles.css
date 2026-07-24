@@ -1,0 +1,94 @@
+/* General Page */
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5f5f5;
+}
+
+/* Header */
+
+header {
+    background: #00558C;
+    color: white;
+    padding: 18px 24px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+/* Main Layout */
+
+.app-container {
+    display: flex;
+    height: calc(100vh - 74px);
+}
+
+/* Sidebar */
+
+.sidebar {
+    width: 275px;
+    background: white;
+    padding: 20px;
+    box-shadow: 2px 0px 8px rgba(0,0,0,.10);
+}
+
+.sidebar h2 {
+    margin-top: 0;
+}
+
+.sidebar button {
+
+    width: 100%;
+
+    padding: 12px;
+
+    margin-bottom: 10px;
+
+    border: none;
+
+    background: #00558C;
+
+    color: white;
+
+    cursor: pointer;
+
+    border-radius: 6px;
+}
+
+.sidebar button:hover {
+
+    background: #003f67;
+
+}
+
+/* Map Area */
+
+.map-container {
+
+    flex: 1;
+
+    padding: 20px;
+
+}
+
+#map-placeholder {
+
+    height: 100%;
+
+    background: white;
+
+    border: 2px dashed #bbbbbb;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-size: 24px;
+
+    color: #777;
+
+}
