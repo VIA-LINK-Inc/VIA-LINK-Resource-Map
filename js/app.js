@@ -1,8 +1,7 @@
-// ====================================================================
-// VIA LINK Disaster Resource Map
-// Application Entry Point
-// ====================================================================
+document.addEventListener("DOMContentLoaded", async () => {
+    console.log("Application starting...");
 
-console.log("Application starting...");
+    await window.mapManager.initialize();
 
-// We'll initialize the map here once Google Maps is connected.
+    console.log("Application ready.");
+});

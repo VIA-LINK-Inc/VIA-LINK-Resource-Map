@@ -12,3 +12,4 @@ node_modules/
 
 # Local environment files
 .env
+js/config.local.js
