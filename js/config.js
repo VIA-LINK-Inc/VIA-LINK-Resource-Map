@@ -10,17 +10,18 @@
 const CONFIG = {
 
     // Google Maps API Key
-    googleMaps: {ApiKey: "AIzaSyAClbVNIqRwa7Yy1kbjU9LIHbgWEp_oV_0"},
+    googleMaps: {apiKey: "KEY_HERE"},
 
    // Default map center (New Orleans)
    map: {
-defaultCenter: {
-    lat: 29.9511,
-    lng: -90.0715
+    defaultCenter: {
+        lat: 29.9511,
+        lng: -90.0715
 },
 
 // Initial zoom level
 defaultZoom: 11,
+
 mapId: null
    }
 
