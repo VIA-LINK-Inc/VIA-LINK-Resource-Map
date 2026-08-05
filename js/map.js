@@ -2,6 +2,7 @@ class MapManager {
 
     constructor() {
         this.map = null;
+        this.markers = [];
     }
 
     async initialize() {
@@ -29,6 +30,8 @@ class MapManager {
         for (const resource of resources) {
             this.createMarker(resource);
         }
+
+        this.fitMapToResources();
     }
 
     createMarker(resource) {
@@ -52,6 +55,8 @@ class MapManager {
                 map: this.map
             });
         });
+
+        this.markers.push(marker);
     }
 
     buildInfoWindow(resource) {
@@ -93,6 +98,27 @@ class MapManager {
 
             </div>
         `;
+    }
+
+    fitMapToResources() {
+
+        if (this.markers.length === 0) {
+            return;
+        }
+
+        if (this.markers.length === 1) {
+            this.map.setCenter(this.markers[0].getPosition());
+            this.map.setZoom(CONFIG.map.defaultZoom);
+            return;
+        }
+
+        const bounds = new google.maps.LatLngBounds();
+
+        for (const marker of this.markers) {
+            bounds.extend(marker.getPosition());
+        }
+
+        this.map.fitBounds(bounds);
     }
 
 }
