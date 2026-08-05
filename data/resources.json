@@ -1,0 +1,35 @@
+[
+    {
+        "id": 1,
+        "name": "Downtown Shelter",
+        "category": "Shelter",
+        "address": "123 Main Street, New Orleans, LA",
+        "latitude": 29.9511,
+        "longitude": -90.0715,
+        "phone": "(504) 555-1001",
+        "website": "https://www.vialink.org",
+        "hours": "Open 24 Hours"
+    },
+    {
+        "id": 2,
+        "name": "Food Distribution Center",
+        "category": "Food",
+        "address": "456 Canal Street, New Orleans, LA",
+        "latitude": 29.9585,
+        "longitude": -90.0780,
+        "phone": "(504) 555-1002",
+        "website": "https://www.vialink.org",
+        "hours": "8:00 AM - 6:00 PM"
+    },
+    {
+        "id": 3,
+        "name": "Medical Assistance",
+        "category": "Medical",
+        "address": "789 Magazine Street, New Orleans, LA",
+        "latitude": 29.9468,
+        "longitude": -90.0645,
+        "phone": "(504) 555-1003",
+        "website": "https://www.vialink.org",
+        "hours": "24/7"
+    }
+]

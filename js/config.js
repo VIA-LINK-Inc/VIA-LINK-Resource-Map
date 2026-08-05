@@ -22,7 +22,7 @@ const CONFIG = {
 // Initial zoom level
 defaultZoom: 11,
 
-mapId: null
+mapId: "DEMO_MAP_ID"
    }
 
 };
