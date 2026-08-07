@@ -3,9 +3,12 @@ class MapManager {
     constructor() {
         this.map = null;
         this.markers = [];
+        this.visibleMarkers = [];
         this.userLocationMarker = null;
- this.activeCategory = "All";
-    this.searchQuery = "";
+        this.markerCluster = null;
+
+        this.activeCategory = "All";
+        this.searchQuery = "";
         // These Google Maps classes will be loaded during initialization.
         this.AdvancedMarkerElement = null;
         this.PinElement = null;
@@ -62,7 +65,13 @@ const coreLibrary =
         for (const resource of resources) {
             this.createMarker(resource);
         }
+        this.visibleMarkers = [...this.markers];
 
+        this.markerCluster =
+            new markerClusterer.MarkerClusterer({
+             map: this.map,
+             markers: this.markers
+    });
         this.fitMapToResources();
     }
 
@@ -83,7 +92,6 @@ const coreLibrary =
         lat: resource.latitude,
         lng: resource.longitude
     },
-    map: this.map,
     title: resource.name,
     gmpClickable: true
 });
@@ -238,11 +246,9 @@ searchMarkers(query, shouldFit = false) {
 }
 
 zoomToFilteredMarkers() {
-    const visibleMarkers = this.markers.filter(
-        (marker) => marker.map === this.map
+    this.fitMapToMarkers(
+        this.visibleMarkers
     );
-
-    this.fitMapToMarkers(visibleMarkers);
 }
 
 applyFilters(shouldFit = true) {
@@ -274,24 +280,29 @@ applyFilters(shouldFit = true) {
             this.searchQuery === "" ||
             searchableText.includes(this.searchQuery);
 
-        const shouldShow =
-            matchesCategory && matchesSearch;
+        if (matchesCategory && matchesSearch) {
+            visibleMarkers.push(marker);
+        }
+    }
 
-        marker.map = shouldShow ? this.map : null;
+    this.visibleMarkers = visibleMarkers;
 
-        if (shouldShow) {
-    visibleMarkers.push(marker);
-}
-}
+    if (this.markerCluster) {
+        this.markerCluster.clearMarkers();
 
-if (visibleMarkers.length === 1) {
-    this.fitMapToMarkers(visibleMarkers);
-}
-else if (shouldFit) {
-    this.fitMapToMarkers(visibleMarkers);
-}
+        this.markerCluster.addMarkers(
+            visibleMarkers
+        );
+    }
 
-return visibleMarkers;
+    if (visibleMarkers.length === 1) {
+        this.fitMapToMarkers(visibleMarkers);
+    }
+    else if (shouldFit && visibleMarkers.length > 1) {
+        this.fitMapToMarkers(visibleMarkers);
+    }
+
+    return visibleMarkers;
 }
 
 fitMapToMarkers(markers) {
