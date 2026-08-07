@@ -79,3 +79,256 @@ header h1 {
     min-height: 600px;
     border-radius: 8px;
 }
+/* Resource information popup */
+
+.resource-popup {
+    width: 260px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #333333;
+}
+
+.resource-popup__title {
+    margin: 0 0 4px;
+    font-size: 20px;
+    color: #00558c;
+}
+
+.resource-popup__category {
+    margin: 0 0 16px;
+    font-weight: 700;
+}
+
+.resource-popup p {
+    margin: 0 0 12px;
+    line-height: 1.4;
+}
+
+.resource-popup__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.resource-popup__actions a {
+    display: inline-block;
+    padding: 9px 12px;
+    border-radius: 5px;
+    background: #00558c;
+    color: #ffffff;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.resource-popup__actions a:hover,
+.resource-popup__actions a:focus {
+    background: #003f67;
+}
+
+/* Map loading and error status */
+
+.map-container {
+    position: relative;
+}
+
+.map-status {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.96);
+    text-align: center;
+}
+
+.map-status[hidden] {
+    display: none;
+}
+
+.map-status__content {
+    width: min(100%, 420px);
+}
+
+.map-status__spinner {
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 18px;
+
+    border: 5px solid #d9e2e8;
+    border-top-color: #00558c;
+    border-radius: 50%;
+
+    animation: map-status-spin 0.8s linear infinite;
+}
+
+.map-status h2 {
+    margin: 0 0 8px;
+    color: #00558c;
+}
+
+.map-status p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.map-status--error .map-status__spinner {
+    display: none;
+}
+
+.map-status--error h2 {
+    color: #a61b1b;
+}
+
+.map-status__retry {
+    margin-top: 18px;
+    padding: 10px 16px;
+
+    border: 0;
+    border-radius: 5px;
+
+    background: #00558c;
+    color: #ffffff;
+
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.map-status__retry:hover,
+.map-status__retry:focus {
+    background: #003f67;
+}
+
+@keyframes map-status-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===========================
+   Resource Search
+   =========================== */
+
+.resource-search {
+    margin-bottom: 24px;
+}
+
+.resource-search label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.resource-search__controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+}
+
+.resource-search input {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+}
+
+#resource-search-submit,
+#resource-search-clear {
+    width: 100%;
+}
+
+.resource-search input {
+    flex: 1;
+    padding: 10px 12px;
+
+    border: 1px solid #c8c8c8;
+    border-radius: 6px;
+
+    font-size: 14px;
+}
+
+.resource-search input:focus {
+    outline: none;
+    border-color: #00558c;
+    box-shadow: 0 0 0 3px rgba(0,85,140,.15);
+}
+
+.resource-search button {
+    white-space: nowrap;
+}
+
+.resource-search__results {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #666;
+    min-height: 18px;
+}
+
+.resource-search__zoom {
+    margin-top: 8px;
+}
+
+.resource-search__zoom[hidden] {
+    display: none;
+}
+
+/* ===========================
+   Sidebar Sections
+   =========================== */
+
+.sidebar-section-title {
+    margin: 18px 0 10px;
+    padding-top: 12px;
+
+    border-top: 1px solid #dddddd;
+
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.resource-results-list {
+    margin-top: 8px;
+    min-height: 20px;
+}
+
+.resource-result {
+    padding: 10px;
+
+    margin-bottom: 8px;
+
+    border: 1px solid #dddddd;
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    transition: background .2s;
+}
+
+.resource-result:hover {
+    background: #f5f5f5;
+}
+
+.resource-result h4 {
+    margin: 0 0 4px;
+    font-size: 14px;
+}
+
+.resource-result p {
+    margin: 0;
+    font-size: 12px;
+    color: #666;
+}
+
+.resource-result__category {
+    margin-bottom: 5px !important;
+
+    font-size: 11px !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    color: #00558c !important;
+}

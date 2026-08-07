@@ -11,7 +11,30 @@ const CONFIG = {
 
     // Google Maps API Key
     googleMaps: {apiKey: "KEY_HERE"},
+googleSheets: {
+    spreadsheetId: "SPREADSHEET_ID_HERE",
 
+    resourceSheets: [
+        {
+            sheetName: "Food",
+            category: "Food"
+        },
+        {
+            sheetName: "Shelter",
+            category: "Shelter"
+        },
+        {
+            sheetName: "Medical",
+            category: "Medical"
+        },
+        {
+            sheetName: "Charging",
+            category: "Charging"
+        }
+    ],
+
+    range: "A1:Z"
+},
    // Default map center (New Orleans)
    map: {
     defaultCenter: {
