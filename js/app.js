@@ -356,6 +356,27 @@ function initializeNearMe() {
         window.mapManager.searchMarkers("", true);
     });
 }
+
+function initializeMobileSidebar() {
+    const sidebar =
+        document.getElementById("resource-sidebar");
+
+    const button =
+        document.getElementById("mobile-resource-button");
+
+    if (!sidebar || !button) {
+        console.warn(
+            "Mobile resource controls could not be initialized."
+        );
+
+        return;
+    }
+
+    button.addEventListener("click", () => {
+        sidebar.classList.toggle("sidebar--open");
+    });
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("Application starting...");
 
@@ -382,6 +403,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         initializeFilterButtons();
         initializeResourceSearch();
         initializeNearMe();
+        initializeMobileSidebar();
 
         hideMapStatus();
 
