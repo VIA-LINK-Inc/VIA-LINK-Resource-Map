@@ -14,6 +14,14 @@ class ResultCardBuilder {
     <h4>${marker.resource.name}</h4>
 
     ${
+        Number.isFinite(marker.resource.distanceMiles)
+            ? `<p class="resource-result__distance">
+                   ${marker.resource.distanceMiles.toFixed(1)} mi away
+               </p>`
+            : ""
+    }
+
+    ${
         marker.resource.address
             ? `<p>${marker.resource.address}</p>`
             : ""

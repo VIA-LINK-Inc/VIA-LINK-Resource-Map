@@ -239,10 +239,14 @@ function initializeNearMe() {
     const button =
         document.getElementById("near-me-button");
 
+    const resetButton =
+        document.getElementById("near-me-reset");
+
     const status =
         document.getElementById("near-me-status");
 
-    if (!button || !status) {
+    if (!button || !resetButton || !status) {
+        console.error("Near Me controls could not be initialized.");
         return;
     }
 
@@ -279,17 +283,37 @@ function initializeNearMe() {
                     location
                 );
 
-            console.table(
-                sortedMarkers.map((marker) => ({
-                    name: marker.resource.name,
-                    distanceMiles:
-                        marker.resource.distanceMiles.toFixed(2)
-                }))
-            );
+            const resultsList =
+                document.getElementById(
+                    "resource-results-list"
+                );
+
+            const resultsText =
+                document.getElementById(
+                    "resource-search-results"
+                );
+
+            if (resultsList && resultsText) {
+                resultsList.innerHTML = "";
+
+                for (const marker of sortedMarkers) {
+                    const card =
+                        window.resultCardBuilder.build(marker);
+
+                    resultsList.appendChild(card);
+                }
+
+                resultsText.textContent =
+                    sortedMarkers.length === 1
+                        ? "1 nearby resource"
+                        : `${sortedMarkers.length} nearby resources`;
+            }
 
             status.textContent = isTestLocation
                 ? "Using test location: New Orleans"
                 : "Location found";
+
+            resetButton.hidden = false;
         }
         catch (processingError) {
             console.error(
@@ -303,6 +327,33 @@ function initializeNearMe() {
         finally {
             button.disabled = false;
         }
+    });
+
+    resetButton.addEventListener("click", () => {
+        window.mapManager.clearUserLocation();
+
+        const resultsList =
+            document.getElementById(
+                "resource-results-list"
+            );
+
+        const resultsText =
+            document.getElementById(
+                "resource-search-results"
+            );
+
+        if (resultsList) {
+            resultsList.innerHTML = "";
+        }
+
+        if (resultsText) {
+            resultsText.textContent = "";
+        }
+
+        status.textContent = "";
+        resetButton.hidden = true;
+
+        window.mapManager.searchMarkers("", true);
     });
 }
 document.addEventListener("DOMContentLoaded", async () => {

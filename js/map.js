@@ -145,6 +145,18 @@ this.userLocationMarker.append(pin);
 
     this.map.panTo(location);
 }
+
+clearUserLocation() {
+    if (this.userLocationMarker) {
+        this.userLocationMarker.map = null;
+        this.userLocationMarker = null;
+    }
+
+    for (const marker of this.markers) {
+        delete marker.resource.distanceMiles;
+    }
+}
+
 getMarkersSortedByDistance(location) {
     return this.markers
         .map((marker) => {

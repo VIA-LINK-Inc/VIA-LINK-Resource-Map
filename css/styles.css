@@ -332,3 +332,9 @@ header h1 {
 
     color: #00558c !important;
 }
+
+.resource-result__distance {
+    margin: 4px 0 !important;
+    font-weight: 600;
+    color: #333 !important;
+}
