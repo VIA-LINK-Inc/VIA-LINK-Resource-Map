@@ -108,37 +108,202 @@ function loadGoogleMapsApi() {
         document.head.appendChild(script);
     });
 }
+function updateNearbyResults() {
 
+    const resultsList =
+        document.getElementById(
+            "resource-results-list"
+        );
+
+    const resultsText =
+        document.getElementById(
+            "resource-search-results"
+        );
+
+    if (
+        !resultsList ||
+        !resultsText ||
+        !window.mapManager.userLocation
+    ) {
+        return;
+    }
+
+    const nearbyMarkers =
+        window.mapManager
+            .getMarkersSortedByDistance(
+                window.mapManager.userLocation,
+                window.mapManager.visibleMarkers
+            );
+
+    resultsList.innerHTML = "";
+
+    for (const marker of nearbyMarkers) {
+
+        const card =
+            window.resultCardBuilder.build(
+                marker
+            );
+
+        resultsList.appendChild(card);
+    }
+
+    if (nearbyMarkers.length === 0) {
+
+        const radius =
+            window.mapManager
+                .nearMeRadiusMiles;
+
+        resultsText.textContent =
+            radius !== null
+                ? `No resources found within ${radius} miles`
+                : "No nearby resources found";
+
+        return;
+    }
+
+    resultsText.textContent =
+        nearbyMarkers.length === 1
+            ? "1 nearby resource"
+            : `${nearbyMarkers.length} nearby resources`;
+}
 
 /**
  * Connects the sidebar buttons to the map filtering system.
  */
 function initializeFilterButtons() {
+    const container =
+        document.getElementById("resource-filter-buttons");
 
-    const filters = [
-        ["filter-all", "All"],
-        ["filter-food", "Food"],
-        ["filter-shelter", "Shelter"],
-        ["filter-medical", "Medical"],
-        ["filter-charging", "Charging"]
+    if (!container) {
+        console.error(
+            "Resource filter button container could not be found."
+        );
+        return;
+    }
+
+    const preferredCategoryOrder = [
+        "Food Sites",
+        "Shelters",
+        "Cooling Station",
+        "Medical Supplies",
+        "Boil Advisory",
+        "Utility Assistance",
+        "Temporary Housing",
+        "Restore Louisiana",
+        "Rebuilding Support",
+        "FEMA",
+        "Operation Hope",
+        "Emotional Support"
     ];
 
-    for (const [buttonId, category] of filters) {
+    const categories =
+        window.resourceManager.getCategories();
 
-        const button = document.getElementById(buttonId);
+    /*
+     * Known categories follow our preferred order.
+     */
+    const knownCategories =
+        preferredCategoryOrder.filter(
+            (category) =>
+                categories.includes(category)
+        );
 
-        if (!button) {
-            console.warn(`Filter button not found: ${buttonId}`);
-            continue;
+    /*
+     * Any category we did not predefine still works.
+     * Unknown categories appear alphabetically after
+     * the known categories.
+     */
+    const unknownCategories =
+        categories
+            .filter(
+                (category) =>
+                    !preferredCategoryOrder.includes(
+                        category
+                    )
+            )
+            .sort(
+                (firstCategory, secondCategory) =>
+                    firstCategory.localeCompare(
+                        secondCategory
+                    )
+            );
+
+    const orderedCategories = [
+        ...knownCategories,
+        ...unknownCategories
+    ];
+
+    container.innerHTML = "";
+
+    /*
+     * "All" always exists because it represents
+     * every currently active resource.
+     */
+    const allButton =
+        document.createElement("button");
+
+    allButton.type = "button";
+    allButton.textContent = "All";
+    allButton.dataset.category = "All";
+    allButton.classList.add(
+        "resource-filter-button"
+    );
+
+    allButton.addEventListener(
+        "click",
+        () => {
+            window.mapManager.filterMarkers(
+                "All"
+            );
+            updateNearbyResults();
         }
+    );
 
-        button.addEventListener("click", () => {
-            window.mapManager.filterMarkers(category);
-        });
+    container.appendChild(allButton);
+
+    /*
+     * Build one button for each category that
+     * actually contains active resources.
+     */
+    for (const category of orderedCategories) {
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+        button.textContent = category;
+        button.dataset.category = category;
+
+        button.classList.add(
+            "resource-filter-button"
+        );
+
+        button.addEventListener(
+            "click",
+            () => {
+                window.mapManager.filterMarkers(
+                    category
+                );
+                updateNearbyResults();
+            }
+        );
+
+        container.appendChild(button);
     }
+
+    console.log(
+        "Resource filter buttons created:",
+        [
+            "All",
+            ...orderedCategories
+        ]
+    );
 }
 
 function initializeResourceSearch() {
+    const searchControls =
+    document.querySelector(
+        ".resource-search__controls"
+    );
     const searchInput =
         document.getElementById("resource-search-input");
 
@@ -148,9 +313,6 @@ function initializeResourceSearch() {
     const clearButton =
         document.getElementById("resource-search-clear");
 
-    const zoomButton =
-        document.getElementById("resource-search-zoom");
-
     const resultsText =
         document.getElementById("resource-search-results");
 
@@ -158,10 +320,10 @@ function initializeResourceSearch() {
     document.getElementById("resource-results-list");
 
     if (
+    !searchControls ||
     !searchInput ||
     !searchButton ||
     !clearButton ||
-    !zoomButton ||
     !resultsText ||
     !resultsList
 ) {
@@ -195,7 +357,10 @@ const runSearch = () => {
 }
 
     clearButton.hidden = query === "";
-    zoomButton.hidden = resultCount <= 1;
+    searchControls.classList.toggle(
+    "resource-search__controls--with-clear",
+    query !== ""
+);
 
     if (query === "") {
         resultsText.textContent = "";
@@ -224,64 +389,153 @@ const runSearch = () => {
         window.mapManager.searchMarkers("", true);
 
         clearButton.hidden = true;
-        zoomButton.hidden = true;
+        searchControls.classList.remove(
+    "resource-search__controls--with-clear"
+);
         resultsText.textContent = "";
         resultsList.innerHTML = "";
 
         searchInput.focus();
     });
-
-    zoomButton.addEventListener("click", () => {
-        window.mapManager.zoomToFilteredMarkers();
-    });
 }
 function initializeNearMe() {
+
     const button =
-        document.getElementById("near-me-button");
+        document.getElementById(
+            "near-me-button"
+        );
 
     const resetButton =
-        document.getElementById("near-me-reset");
+        document.getElementById(
+            "near-me-reset"
+        );
 
     const status =
-        document.getElementById("near-me-status");
+        document.getElementById(
+            "near-me-status"
+        );
 
-    if (!button || !resetButton || !status) {
-        console.error("Near Me controls could not be initialized.");
+    const radiusContainer =
+        document.getElementById(
+            "near-me-radius-container"
+        );
+
+    const radiusSelect =
+        document.getElementById(
+            "near-me-radius"
+        );
+
+    if (
+        !button ||
+        !resetButton ||
+        !status ||
+        !radiusContainer ||
+        !radiusSelect
+    ) {
+        console.error(
+            "Near Me controls could not be initialized."
+        );
+
         return;
     }
 
-    button.addEventListener("click", async () => {
-        status.textContent = "Finding your location...";
-        button.disabled = true;
+    button.addEventListener(
+        "click",
+        async () => {
 
-        let location;
-        let isTestLocation = false;
+            status.textContent =
+                "Finding your location...";
 
-        try {
-            location =
-                await window.locationManager.getCurrentLocation();
-        }
-        catch (locationError) {
-            console.warn(
-                "Live location unavailable. Using the development test location.",
-                locationError
-            );
+            button.disabled = true;
 
-            location = {
-                lat: 29.9511,
-                lng: -90.0715
-            };
+            let location;
+            let isTestLocation = false;
 
-            isTestLocation = true;
-        }
+            try {
+                location =
+                    await window.locationManager
+                        .getCurrentLocation();
+            }
+            catch (locationError) {
 
-        try {
-            window.mapManager.createUserLocationMarker(location);
-
-            const sortedMarkers =
-                window.mapManager.getMarkersSortedByDistance(
-                    location
+                console.warn(
+                    "Live location unavailable. " +
+                    "Using the development test location.",
+                    locationError
                 );
+
+                location = {
+                    lat: 29.9511,
+                    lng: -90.0715
+                };
+
+                isTestLocation = true;
+            }
+
+            try {
+
+                window.mapManager
+                    .createUserLocationMarker(
+                        location
+                    );
+
+                /*
+                 * Default Near Me radius.
+                 */
+                window.mapManager
+                    .setNearMeRadius(
+                        radiusSelect.value
+                    );
+
+                updateNearbyResults();
+
+                radiusContainer.hidden =
+                    false;
+
+                resetButton.hidden =
+                    false;
+
+                status.textContent =
+                    isTestLocation
+                        ? "Using test location: New Orleans"
+                        : "Location found";
+            }
+            catch (processingError) {
+
+                console.error(
+                    "Near Me processing failed:",
+                    processingError
+                );
+
+                status.textContent =
+                    "Location was found, but nearby " +
+                    "resources could not be calculated.";
+            }
+            finally {
+                button.disabled = false;
+            }
+        }
+    );
+
+    radiusSelect.addEventListener(
+        "change",
+        () => {
+
+            window.mapManager
+                .setNearMeRadius(
+                    radiusSelect.value
+                );
+
+            updateNearbyResults();
+        }
+    );
+
+    resetButton.addEventListener(
+        "click",
+        () => {
+
+            window.mapManager
+                .clearUserLocation();
 
             const resultsList =
                 document.getElementById(
@@ -293,68 +547,22 @@ function initializeNearMe() {
                     "resource-search-results"
                 );
 
-            if (resultsList && resultsText) {
+            if (resultsList) {
                 resultsList.innerHTML = "";
-
-                for (const marker of sortedMarkers) {
-                    const card =
-                        window.resultCardBuilder.build(marker);
-
-                    resultsList.appendChild(card);
-                }
-
-                resultsText.textContent =
-                    sortedMarkers.length === 1
-                        ? "1 nearby resource"
-                        : `${sortedMarkers.length} nearby resources`;
             }
 
-            status.textContent = isTestLocation
-                ? "Using test location: New Orleans"
-                : "Location found";
+            if (resultsText) {
+                resultsText.textContent = "";
+            }
 
-            resetButton.hidden = false;
+            status.textContent = "";
+
+            resetButton.hidden = true;
+            radiusContainer.hidden = true;
+
+            radiusSelect.value = "5";
         }
-        catch (processingError) {
-            console.error(
-                "Near Me processing failed:",
-                processingError
-            );
-
-            status.textContent =
-                "Location was found, but nearby resources could not be calculated.";
-        }
-        finally {
-            button.disabled = false;
-        }
-    });
-
-    resetButton.addEventListener("click", () => {
-        window.mapManager.clearUserLocation();
-
-        const resultsList =
-            document.getElementById(
-                "resource-results-list"
-            );
-
-        const resultsText =
-            document.getElementById(
-                "resource-search-results"
-            );
-
-        if (resultsList) {
-            resultsList.innerHTML = "";
-        }
-
-        if (resultsText) {
-            resultsText.textContent = "";
-        }
-
-        status.textContent = "";
-        resetButton.hidden = true;
-
-        window.mapManager.searchMarkers("", true);
-    });
+    );
 }
 
 function initializeMobileSidebar() {

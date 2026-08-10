@@ -1,12 +1,15 @@
 class InfoWindowBuilder {
 
     /**
-     * Prevents spreadsheet or JSON values from being interpreted as HTML.
+     * Prevents spreadsheet or JSON values
+     * from being interpreted as HTML.
      */
     escapeHtml(value) {
-        const element = document.createElement("div");
+        const element =
+            document.createElement("div");
 
-        element.textContent = value ?? "";
+        element.textContent =
+            value ?? "";
 
         return element.innerHTML;
     }
@@ -20,34 +23,86 @@ class InfoWindowBuilder {
         }
 
         try {
-            const url = new URL(website);
+            const url =
+                new URL(website);
 
-            if (url.protocol === "https:" || url.protocol === "http:") {
+            if (
+                url.protocol === "https:" ||
+                url.protocol === "http:"
+            ) {
                 return url.href;
             }
-        } catch (error) {
-            console.warn("Invalid resource website:", website);
+        }
+        catch (error) {
+            console.warn(
+                "Invalid resource website:",
+                website
+            );
         }
 
         return "";
     }
 
     build(resource) {
-        const name = this.escapeHtml(resource.name);
-        const category = this.escapeHtml(resource.category);
-        const address = this.escapeHtml(resource.address);
-        const hours = this.escapeHtml(resource.hours);
-        const phone = this.escapeHtml(resource.phone);
+        const name =
+            this.escapeHtml(resource.name);
 
-        const websiteUrl = this.getSafeWebsiteUrl(resource.website);
-        const directionsUrl = resource.getDirectionsUrl();
-        const phoneUrl = resource.getPhoneUrl();
+        const category =
+            this.escapeHtml(resource.category);
+
+        const address =
+            this.escapeHtml(resource.address);
+
+        const parish =
+            this.escapeHtml(resource.parish);
+
+        const hours =
+            this.escapeHtml(resource.hours);
+
+        const phone =
+            this.escapeHtml(resource.phone);
+
+        const email =
+            this.escapeHtml(resource.email);
+
+        const website =
+            this.escapeHtml(resource.website);
+
+        const description =
+            this.escapeHtml(resource.description);
+
+        const websiteUrl =
+            this.getSafeWebsiteUrl(
+                resource.website
+            );
+
+        /*
+         * Directions technically work from coordinates,
+         * but we only show the button when Address exists.
+         */
+        const directionsUrl =
+            address
+                ? resource.getDirectionsUrl()
+                : "";
+
+        const phoneUrl =
+            resource.getPhoneUrl();
+
+        const hasActions =
+            directionsUrl ||
+            phoneUrl ||
+            websiteUrl;
 
         return `
             <article class="resource-popup">
-                <h2 class="resource-popup__title">${name}</h2>
 
-                <p class="resource-popup__category">${category}</p>
+                <h2 class="resource-popup__title">
+                    ${name}
+                </h2>
+
+                <p class="resource-popup__category">
+                    ${category}
+                </p>
 
                 ${
                     address
@@ -55,6 +110,17 @@ class InfoWindowBuilder {
                             <p>
                                 <strong>Address</strong><br>
                                 ${address}
+                            </p>
+                        `
+                        : ""
+                }
+
+                ${
+                    parish
+                        ? `
+                            <p>
+                                <strong>Parish</strong><br>
+                                ${parish}
                             </p>
                         `
                         : ""
@@ -82,38 +148,91 @@ class InfoWindowBuilder {
                         : ""
                 }
 
-                <div class="resource-popup__actions">
-                    <a
-                        href="${directionsUrl}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Directions
-                    </a>
+                ${
+                    email
+                        ? `
+                            <p>
+                                <strong>Email</strong><br>
+                                ${email}
+                            </p>
+                        `
+                        : ""
+                }
 
-                    ${
-                        phoneUrl
-                            ? `<a href="${phoneUrl}">Call</a>`
-                            : ""
-                    }
+                ${
+                    websiteUrl
+                        ? `
+                            <p>
+                                <strong>Website</strong><br>
+                                ${website}
+                            </p>
+                        `
+                        : ""
+                }
 
-                    ${
-                        websiteUrl
-                            ? `
-                                <a
-                                    href="${websiteUrl}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    Website
-                                </a>
-                            `
-                            : ""
-                    }
-                </div>
+                ${
+                    description
+                        ? `
+                            <p>
+                                <strong>Description</strong><br>
+                                ${description}
+                            </p>
+                        `
+                        : ""
+                }
+
+                ${
+                    hasActions
+                        ? `
+                            <div class="resource-popup__actions">
+
+                                ${
+                                    directionsUrl
+                                        ? `
+                                            <a
+                                                href="${directionsUrl}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                Directions
+                                            </a>
+                                        `
+                                        : ""
+                                }
+
+                                ${
+                                    phoneUrl
+                                        ? `
+                                            <a href="${phoneUrl}">
+                                                Call
+                                            </a>
+                                        `
+                                        : ""
+                                }
+
+                                ${
+                                    websiteUrl
+                                        ? `
+                                            <a
+                                                href="${websiteUrl}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                Website
+                                            </a>
+                                        `
+                                        : ""
+                                }
+
+                            </div>
+                        `
+                        : ""
+                }
+
             </article>
         `;
     }
 }
 
-window.infoWindowBuilder = new InfoWindowBuilder();
+window.infoWindowBuilder =
+    new InfoWindowBuilder();

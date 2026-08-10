@@ -74,15 +74,6 @@
     class="resource-results-list"
 ></div>
 
-<button
-    type="button"
-    id="resource-search-zoom"
-        class="resource-search__zoom"
-        hidden
-    >
-        Zoom to Results
-    </button>
-
 </div>
 <div class="location-tools">
 
@@ -96,6 +87,31 @@
     >
         Use My Location
     </button>
+    <div
+    id="near-me-radius-container"
+    class="near-me-radius"
+    hidden
+>
+    <label for="near-me-radius">
+        Distance
+    </label>
+
+    <select id="near-me-radius">
+        <option value="5" selected>Within 5 miles</option>
+
+        <option value="10">
+            Within 10 miles
+        </option>
+
+        <option value="25">
+            Within 25 miles
+        </option>
+
+        <option value="all">
+            All Distances
+        </option>
+    </select>
+</div>
 <button
     type="button"
     id="near-me-reset"
@@ -113,11 +129,10 @@
 
         <h2>Resource Filters</h2>
 
-<button id="filter-all">All</button>
-<button id="filter-food">Food</button>
-<button id="filter-shelter">Shelter</button>
-<button id="filter-medical">Medical</button>
-<button id="filter-charging">Charging</button>
+<div
+    id="resource-filter-buttons"
+    class="resource-filter-buttons"
+></div>
 
     </aside>
 
@@ -156,7 +171,6 @@
 
     <!-- Configuration -->
 <script src="js/config.js"></script>
-<script src="js/config.local.js"></script>
 
 <!-- Resource architecture -->
 <script src="js/resource.js"></script>

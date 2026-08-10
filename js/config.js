@@ -4,48 +4,32 @@
 // ====================================================================
 
 // Central location for application settings.
-// When we move from the demo API key to the production key,
-// this is the only file we'll need to update.
 
 const CONFIG = {
 
-    // Google Maps API Key
-    googleMaps: {apiKey: "KEY_HERE"},
-googleSheets: {
-    spreadsheetId: "SPREADSHEET_ID_HERE",
+    // Google Maps configuration
+    googleMaps: {
+        apiKey: "AIzaSyAClbVNIqRwa7Yy1kbjU9LIHbgWEp_oV_0"
+    },
 
-    resourceSheets: [
-        {
-            sheetName: "Food",
-            category: "Food"
+    // Google Sheets configuration
+    googleSheets: {
+        spreadsheetId: "1JrqGYulk1h3Kzx_IWyphtj6eJQoanyf7shY5t0XJ6J8"
+    },
+
+    // Map configuration
+    map: {
+
+        // Default map center: New Orleans
+        defaultCenter: {
+            lat: 29.9511,
+            lng: -90.0715
         },
-        {
-            sheetName: "Shelter",
-            category: "Shelter"
-        },
-        {
-            sheetName: "Medical",
-            category: "Medical"
-        },
-        {
-            sheetName: "Charging",
-            category: "Charging"
-        }
-    ],
 
-    range: "A1:Z"
-},
-   // Default map center (New Orleans)
-   map: {
-    defaultCenter: {
-        lat: 29.9511,
-        lng: -90.0715
-},
+        // Initial zoom level
+        defaultZoom: 11,
 
-// Initial zoom level
-defaultZoom: 11,
-
-mapId: "DEMO_MAP_ID"
-   }
-
+        // Google Maps Map ID
+        mapId: "YOUR_MAP_ID"
+    }
 };

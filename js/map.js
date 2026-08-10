@@ -5,6 +5,8 @@ class MapManager {
         this.markers = [];
         this.visibleMarkers = [];
         this.userLocationMarker = null;
+        this.userLocation = null;
+        this.nearMeRadiusMiles = null;
         this.markerCluster = null;
 
         this.activeCategory = "All";
@@ -134,59 +136,103 @@ createUserLocationMarker(location) {
         this.userLocationMarker.map = null;
     }
 
-    const pin = new this.PinElement({
-    background: "#1a73e8",
-    borderColor: "#0b57d0",
-    glyphColor: "#ffffff",
-    glyphText: "●",
-    scale: 1.2
-});
+    this.userLocation = location;
 
-this.userLocationMarker =
-    new this.AdvancedMarkerElement({
-        position: location,
-        map: this.map,
-        title: "Your Location"
+    const pin = new this.PinElement({
+        background: "#1a73e8",
+        borderColor: "#0b57d0",
+        glyphColor: "#ffffff",
+        glyphText: "●",
+        scale: 1.2
     });
 
-this.userLocationMarker.append(pin);
+    this.userLocationMarker =
+        new this.AdvancedMarkerElement({
+            position: location,
+            map: this.map,
+            title: "Your Location"
+        });
+
+    this.userLocationMarker.append(pin);
 
     this.map.panTo(location);
 }
 
 clearUserLocation() {
+
     if (this.userLocationMarker) {
         this.userLocationMarker.map = null;
         this.userLocationMarker = null;
     }
 
+    this.userLocation = null;
+    this.nearMeRadiusMiles = null;
+
     for (const marker of this.markers) {
         delete marker.resource.distanceMiles;
     }
-}
 
-getMarkersSortedByDistance(location) {
-    return this.markers
+    return this.applyFilters(true);
+}
+setNearMeRadius(radiusMiles) {
+
+    if (
+        radiusMiles === null ||
+        radiusMiles === "all"
+    ) {
+        this.nearMeRadiusMiles = null;
+    }
+    else {
+        const numericRadius =
+            Number(radiusMiles);
+
+        this.nearMeRadiusMiles =
+            Number.isFinite(numericRadius)
+                ? numericRadius
+                : null;
+    }
+
+    return this.applyFilters(true);
+}
+getMarkersSortedByDistance(
+    location,
+    markers = this.markers
+) {
+    return markers
         .map((marker) => {
+
             const resourceLocation =
                 marker.resource.location ?? {
-                    lat: Number(marker.resource.latitude),
-                    lng: Number(marker.resource.longitude)
+                    lat:
+                        Number(
+                            marker.resource.latitude
+                        ),
+                    lng:
+                        Number(
+                            marker.resource.longitude
+                        )
                 };
 
             const distanceMiles =
-                window.locationManager.calculateDistanceMiles(
-                    location,
-                    resourceLocation
-                );
+                window.locationManager
+                    .calculateDistanceMiles(
+                        location,
+                        resourceLocation
+                    );
 
-            marker.resource.location = resourceLocation;
-            marker.resource.distanceMiles = distanceMiles;
+            marker.resource.location =
+                resourceLocation;
+
+            marker.resource.distanceMiles =
+                distanceMiles;
 
             return marker;
         })
-        .filter((marker) =>
-            Number.isFinite(marker.resource.distanceMiles)
+        .filter(
+            (marker) =>
+                Number.isFinite(
+                    marker.resource.distanceMiles
+                )
         )
         .sort(
             (firstMarker, secondMarker) =>
@@ -194,30 +240,30 @@ getMarkersSortedByDistance(location) {
                 secondMarker.resource.distanceMiles
         );
 }
-    getMarkerColors(category) {
+            getMarkerColors(category) {
 
-        const categoryColors = {
-            Shelter: {
-                background: "#1976d2",
-                border: "#0d47a1"
-            },
+                const categoryColors = {
 
-            Food: {
+            "Food Sites": {
                 background: "#2e7d32",
                 border: "#1b5e20"
             },
 
-            Medical: {
-                background: "#d32f2f",
-                border: "#8b0000"
+            "Shelters": {
+                background: "#1976d2",
+                border: "#0d47a1"
             },
 
-            Charging: {
+            "Cooling Station": {
                 background: "#f9a825",
                 border: "#b26a00"
+            },
+
+            "Medical Supplies": {
+                background: "#d32f2f",
+                border: "#8b0000"
             }
         };
-
         return categoryColors[category] || {
             background: "#7b1fa2",
             border: "#4a0072"
@@ -245,12 +291,6 @@ searchMarkers(query, shouldFit = false) {
     return this.applyFilters(shouldFit);
 }
 
-zoomToFilteredMarkers() {
-    this.fitMapToMarkers(
-        this.visibleMarkers
-    );
-}
-
 applyFilters(shouldFit = true) {
     const visibleMarkers = [];
 
@@ -265,12 +305,12 @@ applyFilters(shouldFit = true) {
             resource.name,
             resource.category,
             resource.address,
+            resource.parish,
+            resource.description,
+            resource.hours,
             resource.phone,
             resource.email,
-            resource.website,
-            resource.hours,
-            resource.notes,
-            resource.languages
+            resource.website
         ]
             .filter(Boolean)
             .join(" ")
@@ -280,7 +320,35 @@ applyFilters(shouldFit = true) {
             this.searchQuery === "" ||
             searchableText.includes(this.searchQuery);
 
-        if (matchesCategory && matchesSearch) {
+        let matchesNearMe = true;
+
+        if (this.userLocation) {
+            const resourceLocation =
+                resource.location ?? {
+                    lat: Number(resource.latitude),
+                    lng: Number(resource.longitude)
+                };
+
+            const distanceMiles =
+                window.locationManager.calculateDistanceMiles(
+                    this.userLocation,
+                    resourceLocation
+                );
+
+            resource.location = resourceLocation;
+            resource.distanceMiles = distanceMiles;
+
+            if (this.nearMeRadiusMiles !== null) {
+                matchesNearMe =
+                    distanceMiles <= this.nearMeRadiusMiles;
+            }
+        }
+
+        if (
+            matchesCategory &&
+            matchesSearch &&
+            matchesNearMe
+        ) {
             visibleMarkers.push(marker);
         }
     }
@@ -298,7 +366,10 @@ applyFilters(shouldFit = true) {
     if (visibleMarkers.length === 1) {
         this.fitMapToMarkers(visibleMarkers);
     }
-    else if (shouldFit && visibleMarkers.length > 1) {
+    else if (
+        shouldFit &&
+        visibleMarkers.length > 1
+    ) {
         this.fitMapToMarkers(visibleMarkers);
     }
 
@@ -333,17 +404,6 @@ fitMapToMarkers(markers) {
 
     this.map.fitBounds(bounds, 60);
 
-    google.maps.event.addListenerOnce(
-        this.map,
-        "idle",
-        () => {
-            const currentZoom = this.map.getZoom();
-
-            if (currentZoom < CONFIG.map.defaultZoom) {
-                this.map.setZoom(CONFIG.map.defaultZoom);
-            }
-        }
-    );
 }
 
 fitMapToResources() {

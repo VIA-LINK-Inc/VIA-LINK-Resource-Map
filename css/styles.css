@@ -229,7 +229,7 @@ header h1 {
 
 .resource-search__controls {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
 }
 
@@ -239,9 +239,31 @@ header h1 {
     min-width: 0;
 }
 
-#resource-search-submit,
-#resource-search-clear {
+#resource-search-submit {
+    grid-column: 1 / -1;
     width: 100%;
+    margin-bottom: 0;
+}
+
+#resource-search-clear {
+    grid-column: 2;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+/*
+ * When Clear is visible, Search uses the left half
+ * and Clear uses the right half.
+ */
+.resource-search__controls:has(
+    #resource-search-clear:not([hidden])
+) #resource-search-submit {
+    grid-column: 1;
+}
+
+/* Split Search and Clear evenly when Clear is visible */
+.resource-search__controls--with-clear {
+    grid-template-columns: 1fr 1fr;
 }
 
 .resource-search input {
@@ -271,13 +293,6 @@ header h1 {
     min-height: 18px;
 }
 
-.resource-search__zoom {
-    margin-top: 8px;
-}
-
-.resource-search__zoom[hidden] {
-    display: none;
-}
 
 /* ===========================
    Sidebar Sections
