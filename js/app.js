@@ -585,9 +585,62 @@ function initializeMobileSidebar() {
     });
 }
 
+function initializeDemoMode() {
+
+    const overlay =
+        document.getElementById(
+            "demo-overlay"
+        );
+
+    const dismissButton =
+        document.getElementById(
+            "demo-overlay-dismiss"
+        );
+
+    if (!overlay || !dismissButton) {
+        console.warn(
+            "Demo mode controls could not be initialized."
+        );
+
+        return;
+    }
+
+    const demoEnabled =
+        CONFIG.demo?.enabled === true;
+
+    if (!demoEnabled) {
+        overlay.hidden = true;
+
+        document.body.classList.remove(
+            "demo-mode-active"
+        );
+
+        return;
+    }
+
+    overlay.hidden = false;
+
+    document.body.classList.add(
+        "demo-mode-active"
+    );
+
+    dismissButton.addEventListener(
+        "click",
+        () => {
+
+            overlay.hidden = true;
+
+            document.body.classList.remove(
+                "demo-mode-active"
+            );
+        }
+    );
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("Application starting...");
 
+    initializeDemoMode();
     try {
         updateMapStatus(
             "Loading Resource Map",

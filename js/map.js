@@ -8,6 +8,7 @@ class MapManager {
         this.userLocation = null;
         this.nearMeRadiusMiles = null;
         this.markerCluster = null;
+        this.activeInfoWindow = null;
 
         this.activeCategory = "All";
         this.searchQuery = "";
@@ -44,6 +45,9 @@ const coreLibrary =
         this.LatLngBounds =
             coreLibrary.LatLngBounds;
 
+            this.activeInfoWindow =
+    new this.InfoWindow();
+
         this.map = new mapsLibrary.Map(
             document.getElementById("map"),
             {
@@ -70,10 +74,22 @@ const coreLibrary =
         this.visibleMarkers = [...this.markers];
 
         this.markerCluster =
-            new markerClusterer.MarkerClusterer({
-             map: this.map,
-             markers: this.markers
+    new markerClusterer.MarkerClusterer({
+        map: this.map,
+        markers: this.markers,
+
+        onClusterClick: (event, cluster) => {
+            if (!cluster.bounds) {
+                return;
+            }
+
+            this.map.fitBounds(
+                cluster.bounds,
+                80
+            );
+        }
     });
+
         this.fitMapToResources();
     }
 
@@ -104,12 +120,12 @@ const coreLibrary =
         // Keep the resource data attached to its marker.
         marker.resource = resource;
 
-        const infoWindow = new this.InfoWindow({
-            content: this.buildInfoWindow(resource)
-        });
+       marker.addEventListener("gmp-click", () => {
+    this.activeInfoWindow.setContent(
+        this.buildInfoWindow(resource)
+    );
 
-        marker.addEventListener("gmp-click", () => {
-    infoWindow.open({
+    this.activeInfoWindow.open({
         anchor: marker,
         map: this.map
     });
@@ -117,15 +133,15 @@ const coreLibrary =
 
         this.markers.push(marker);
     }
-    focusMarker(marker) {
+   focusMarker(marker) {
     this.map.panTo(marker.position);
     this.map.setZoom(14);
 
-    const infoWindow = new this.InfoWindow({
-        content: this.buildInfoWindow(marker.resource)
-    });
+    this.activeInfoWindow.setContent(
+        this.buildInfoWindow(marker.resource)
+    );
 
-    infoWindow.open({
+    this.activeInfoWindow.open({
         anchor: marker,
         map: this.map
     });

@@ -17,6 +17,10 @@ const CONFIG = {
         spreadsheetId: "1JrqGYulk1h3Kzx_IWyphtj6eJQoanyf7shY5t0XJ6J8"
     },
 
+    demo: {
+        enabled: false 
+    },
+
     // Map configuration
     map: {
 

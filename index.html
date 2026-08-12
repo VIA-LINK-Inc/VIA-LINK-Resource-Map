@@ -12,8 +12,37 @@
 </head>
 
 <body>
+    <div
+    id="demo-overlay"
+    class="demo-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="demo-overlay-title"
+>
+    <div class="demo-overlay__notice">
+
+        <h2 id="demo-overlay-title">
+            This is a Demo Version
+        </h2>
+
+        <p>
+            This resource map is a demo version of the tool
+            that VIA LINK deploys during disasters.
+            The information displayed here is sample data
+            and does not represent actual resources.
+        </p>
+
+        <button
+            type="button"
+            id="demo-overlay-dismiss"
+        >
+            I Understand
+        </button>
+
+    </div>
+</div>
 <header>
-    <h1>VIA LINK Disaster Resource Map</h1>
+    <h1>DEMO - VIA LINK Disaster Resource Map</h1>
 
     <button
         type="button"
@@ -26,115 +55,122 @@
 
 <main class="app-container">
 
-    <aside class="sidebar" id="resource-sidebar">
-<div class="resource-search">
+   <aside class="sidebar" id="resource-sidebar">
 
-    <label for="resource-search-input">
-        Search resources
-    </label>
+    <div class="resource-search">
 
-    <div class="resource-search__controls">
+        <label for="resource-search-input">
+            Search resources
+        </label>
 
-        <input
-            type="search"
-            id="resource-search-input"
-            placeholder="Name, address, city, or ZIP"
-            autocomplete="off"
-        >
+        <div class="resource-search__controls">
+
+            <input
+                type="search"
+                id="resource-search-input"
+                placeholder="Name, address, city, or ZIP"
+                autocomplete="off"
+            >
+
+            <button
+                type="button"
+                id="resource-search-submit"
+            >
+                Search
+            </button>
+
+            <button
+                type="button"
+                id="resource-search-clear"
+                hidden
+            >
+                Clear
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="location-tools">
+
+        <h3 class="sidebar-section-title">
+            Location
+        </h3>
 
         <button
             type="button"
-            id="resource-search-submit"
+            id="near-me-button"
         >
-            Search
+            Use My Location
         </button>
 
-        <button
-            type="button"
-            id="resource-search-clear"
+        <div
+            id="near-me-radius-container"
+            class="near-me-radius"
             hidden
         >
-            Clear
+            <label for="near-me-radius">
+                Distance
+            </label>
+
+            <select id="near-me-radius">
+                <option value="5" selected>
+                    Within 5 miles
+                </option>
+
+                <option value="10">
+                    Within 10 miles
+                </option>
+
+                <option value="25">
+                    Within 25 miles
+                </option>
+
+                <option value="all">
+                    All Distances
+                </option>
+            </select>
+        </div>
+
+        <button
+            type="button"
+            id="near-me-reset"
+            hidden
+        >
+            Reset Location
         </button>
+
+        <p
+            id="near-me-status"
+            class="near-me-status"
+            aria-live="polite"
+        ></p>
 
     </div>
 
     <h3 class="sidebar-section-title">
-    Results
-</h3>
-
-<p
-    id="resource-search-results"
-    class="resource-search__results"
-    aria-live="polite"
-></p>
-
-<div
-    id="resource-results-list"
-    class="resource-results-list"
-></div>
-
-</div>
-<div class="location-tools">
-
-    <h3 class="sidebar-section-title">
-        Location
+        Results
     </h3>
 
-    <button
-        type="button"
-        id="near-me-button"
-    >
-        Use My Location
-    </button>
-    <div
-    id="near-me-radius-container"
-    class="near-me-radius"
-    hidden
->
-    <label for="near-me-radius">
-        Distance
-    </label>
-
-    <select id="near-me-radius">
-        <option value="5" selected>Within 5 miles</option>
-
-        <option value="10">
-            Within 10 miles
-        </option>
-
-        <option value="25">
-            Within 25 miles
-        </option>
-
-        <option value="all">
-            All Distances
-        </option>
-    </select>
-</div>
-<button
-    type="button"
-    id="near-me-reset"
-    hidden
->
-    Reset Location
-</button>
     <p
-        id="near-me-status"
-        class="near-me-status"
+        id="resource-search-results"
+        class="resource-search__results"
         aria-live="polite"
     ></p>
 
-</div>
+    <div
+        id="resource-results-list"
+        class="resource-results-list"
+    ></div>
 
-        <h2>Resource Filters</h2>
+    <h2>Resource Filters</h2>
 
-<div
-    id="resource-filter-buttons"
-    class="resource-filter-buttons"
-></div>
+    <div
+        id="resource-filter-buttons"
+        class="resource-filter-buttons"
+    ></div>
 
-    </aside>
+</aside>
 
    <section class="map-container">
 
