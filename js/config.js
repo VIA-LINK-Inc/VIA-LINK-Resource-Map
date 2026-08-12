@@ -18,7 +18,7 @@ const CONFIG = {
     },
 
     demo: {
-        enabled: false 
+        enabled: true 
     },
 
     // Map configuration
