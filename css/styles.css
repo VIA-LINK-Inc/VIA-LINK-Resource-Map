@@ -10,7 +10,7 @@ body {
 /* Header */
 
 header {
-    background: #00558C;
+    background: #087DC1;
     color: white;
     padding: 18px 24px;
 }
@@ -52,7 +52,7 @@ header h1 {
 
     border: none;
 
-    background: #00558C;
+    background: #087DC1;
 
     color: white;
 
@@ -63,7 +63,7 @@ header h1 {
 
 .sidebar button:hover {
 
-    background: #003f67;
+    background: #087DC1;
 
 }
 
@@ -94,7 +94,7 @@ header h1 {
 .resource-popup__title {
     margin: 0 0 4px;
     font-size: 20px;
-    color: #00558c;
+    color: #087DC1;
 }
 
 .resource-popup__category {
@@ -118,7 +118,7 @@ header h1 {
     display: inline-block;
     padding: 9px 12px;
     border-radius: 5px;
-    background: #00558c;
+    background: #087DC1;
     color: #ffffff;
     font-weight: 700;
     text-decoration: none;
@@ -126,7 +126,7 @@ header h1 {
 
 .resource-popup__actions a:hover,
 .resource-popup__actions a:focus {
-    background: #003f67;
+    background: #087DC1;
 }
 
 /* Map loading and error status */
@@ -163,7 +163,7 @@ header h1 {
     margin: 0 auto 18px;
 
     border: 5px solid #d9e2e8;
-    border-top-color: #00558c;
+    border-top-color: #087DC1;
     border-radius: 50%;
 
     animation: map-status-spin 0.8s linear infinite;
@@ -171,7 +171,7 @@ header h1 {
 
 .map-status h2 {
     margin: 0 0 8px;
-    color: #00558c;
+    color: #087DC1;
 }
 
 .map-status p {
@@ -194,7 +194,7 @@ header h1 {
     border: 0;
     border-radius: 5px;
 
-    background: #00558c;
+    background: #087DC1;
     color: #ffffff;
 
     font: inherit;
@@ -204,7 +204,7 @@ header h1 {
 
 .map-status__retry:hover,
 .map-status__retry:focus {
-    background: #003f67;
+    background: #087DC1;
 }
 
 @keyframes map-status-spin {
@@ -278,7 +278,7 @@ header h1 {
 
 .resource-search input:focus {
     outline: none;
-    border-color: #00558c;
+    border-color: #087DC1;
     box-shadow: 0 0 0 3px rgba(0,85,140,.15);
 }
 
@@ -349,7 +349,7 @@ header h1 {
     text-transform: uppercase;
     letter-spacing: 0.04em;
 
-    color: #00558c !important;
+    color: #087DC1 !important;
 }
 
 .resource-result__distance {
@@ -382,7 +382,7 @@ header {
     border-radius: 6px;
 
     background: #ffffff;
-    color: #00558c;
+    color: #087DC1;
 
     font-size: 14px;
     font-weight: 700;
