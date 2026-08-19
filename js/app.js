@@ -181,20 +181,8 @@ function initializeFilterButtons() {
         return;
     }
 
-    const preferredCategoryOrder = [
-        "Food Sites",
-        "Shelters",
-        "Cooling Station",
-        "Medical Supplies",
-        "Boil Advisory",
-        "Utility Assistance",
-        "Temporary Housing",
-        "Restore Louisiana",
-        "Rebuilding Support",
-        "FEMA",
-        "Operation Hope",
-        "Emotional Support"
-    ];
+    const preferredCategoryOrder =
+    CONFIG.resourceCategories?.order ?? [];
 
     const categories =
         window.resourceManager.getCategories();
@@ -331,7 +319,6 @@ function initializeResourceSearch() {
         searchInput,
         searchButton,
         clearButton,
-        zoomButton,
         resultsText,
         resultsList
     });
@@ -464,9 +451,8 @@ function initializeNearMe() {
                     locationError
                 );
 
-                location = {
-                    lat: 29.9511,
-                    lng: -90.0715
+                        location = {
+            ...CONFIG.map.defaultCenter
                 };
 
                 isTestLocation = true;
@@ -497,7 +483,7 @@ function initializeNearMe() {
 
                 status.textContent =
                     isTestLocation
-                        ? "Using test location: New Orleans"
+                        ? `Using test location: ${CONFIG.client.name}`
                         : "Location found";
             }
             catch (processingError) {
@@ -585,6 +571,39 @@ function initializeMobileSidebar() {
     });
 }
 
+function initializeClientBranding() {
+        const brandColor =
+        CONFIG.client?.brandColor;
+
+    if (brandColor) {
+        document.documentElement.style.setProperty(
+            "--brand-primary",
+            brandColor
+        );
+    }
+
+    const pageTitle =
+        document.getElementById("page-title");
+
+    const mapTitle =
+        document.getElementById("map-title");
+
+    const title =
+        CONFIG.demo?.enabled
+            ? CONFIG.client.demoMapTitle
+            : CONFIG.client.mapTitle;
+
+    document.title = title;
+
+    if (pageTitle) {
+        pageTitle.textContent = title;
+    }
+
+    if (mapTitle) {
+        mapTitle.textContent = title;
+    }
+}
+
 function initializeDemoMode() {
 
     const overlay =
@@ -597,6 +616,16 @@ function initializeDemoMode() {
             "demo-overlay-dismiss"
         );
 
+    const title =
+        document.getElementById(
+            "demo-overlay-title"
+        );
+
+    const message =
+        document.getElementById(
+            "demo-overlay-message"
+        );
+
     if (!overlay || !dismissButton) {
         console.warn(
             "Demo mode controls could not be initialized."
@@ -604,6 +633,20 @@ function initializeDemoMode() {
 
         return;
     }
+
+    // Populate demo content from config.
+    if (title) {
+        title.textContent =
+            CONFIG.demo.title;
+    }
+
+    if (message) {
+        message.textContent =
+            CONFIG.demo.message;
+    }
+
+    dismissButton.textContent =
+        CONFIG.demo.buttonText;
 
     const demoEnabled =
         CONFIG.demo?.enabled === true;
@@ -640,7 +683,9 @@ function initializeDemoMode() {
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("Application starting...");
 
+    initializeClientBranding();
     initializeDemoMode();
+
     try {
         updateMapStatus(
             "Loading Resource Map",
@@ -651,7 +696,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         updateMapStatus(
             "Loading Resource Map",
-            "Loading VIA LINK resources..."
+            `Loading ${CONFIG.client.name} resources...`
         );
 
         await window.mapManager.initialize();

@@ -92,11 +92,11 @@ const coreLibrary =
     );
 
     this.map.setZoom(
-        Math.min(
-            currentZoom + 2,
-            16
-        )
-    );
+    Math.min(
+        currentZoom + CONFIG.map.clusterZoomStep,
+        CONFIG.map.clusterMaxZoom
+    )
+);
 }
     });
 
@@ -110,17 +110,20 @@ const coreLibrary =
 
     let markerGraphic;
 
-    if (resource.category === "Boil Advisory") {
+    if (markerStyle.type === "warning") {
         markerGraphic =
             this.createWarningMarkerGraphic();
     }
     else {
         const pin = new this.PinElement({
-            background: markerStyle.background,
-            borderColor: markerStyle.border,
-            glyphSrc: markerStyle.icon,
-            scale: 1.15
-        });
+    background: markerStyle.background,
+    borderColor: markerStyle.border,
+    glyphSrc: this.createSvgIcon(
+        this.getMarkerIcon(markerStyle.icon),
+        "#ffffff"
+    ),
+    scale: 1.15
+});
 
         markerGraphic = pin;
     }
@@ -159,7 +162,9 @@ const coreLibrary =
 }
    focusMarker(marker) {
     this.map.panTo(marker.position);
-    this.map.setZoom(13);
+    this.map.setZoom(
+    CONFIG.map.singleResourceZoom
+);
 
     this.activeInfoWindow.setContent(
         this.buildInfoWindow(marker.resource)
@@ -351,130 +356,89 @@ createWarningMarkerGraphic() {
 
     return container;
 }
+getMarkerIcon(iconName) {
+
+    const icons = {
+
+        food: `
+            <path d="M7 2v8M4 2v4c0 2 1 3 3 3s3-1 3-3V2M7 10v12"/>
+            <path d="M16 2v20"/>
+            <path d="M16 2c3 3 3 7 0 10"/>
+        `,
+
+        shelter: `
+            <path d="M3 11L12 3l9 8"/>
+            <path d="M5 10v11h14V10"/>
+            <path d="M9 21v-7h6v7"/>
+        `,
+
+        snowflake: `
+            <path d="M12 2v20M4.5 6.5l15 11M19.5 6.5l-15 11"/>
+        `,
+
+        medical: `
+            <path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>
+        `,
+
+        charging: `
+            <path d="M13 2L5 14h6l-1 8 9-13h-6z"/>
+        `,
+
+        house: `
+            <path d="M3 11L12 3l9 8"/>
+            <path d="M5 10v11h14V10"/>
+            <path d="M9 21v-7h6v7"/>
+        `,
+
+        hammer: `
+            <path d="M14 5l5 5"/>
+            <path d="M12 7l5 5"/>
+            <path d="M3 21l10-10"/>
+            <path d="M11 4l3-2 7 7-3 3z"/>
+        `,
+
+        plug: `
+            <path d="M8 3v6M16 3v6"/>
+            <path d="M6 9h12v3a6 6 0 0 1-12 0z"/>
+            <path d="M12 18v4"/>
+        `,
+
+        repairHouse: `
+            <path d="M3 11L12 3l9 8"/>
+            <path d="M5 10v11h14V10"/>
+            <path d="M15 14l4 4"/>
+            <path d="M14 19l5-5"/>
+        `,
+
+        heart: `
+            <path d="M12 21S4 16 4 9a4 4 0 0 1 7-2.5A4 4 0 0 1 18 9c0 7-6 12-6 12z"/>
+        `,
+
+        shield: `
+            <path d="M12 2l8 3v6c0 5-3 9-8 11-5-2-8-6-8-11V5z"/>
+            <path d="M8 12l3 3 5-6"/>
+        `,
+
+        default: `
+            <circle cx="12" cy="12" r="3"/>
+        `
+    };
+
+    return icons[iconName] ?? icons.default;
+}
            getMarkerStyle(category) {
 
-    const whiteIcon = (svgPath) =>
-        this.createSvgIcon(
-            svgPath,
-            "#ffffff"
-        );
+    const configuredStyle =
+        CONFIG.resourceCategories?.styles?.[category];
 
-    const categoryStyles = {
+    const defaultStyle =
+        CONFIG.resourceCategories?.defaultStyle ?? {
+            background: "#757575",
+            border: "#424242",
+            icon: "default"
+        };
 
-        "Food Sites": {
-            background: "#2e7d32",
-            border: "#1b5e20",
-            icon: whiteIcon(`
-                <path d="M7 2v8M4 2v4c0 2 1 3 3 3s3-1 3-3V2M7 10v12"/>
-                <path d="M16 2v20"/>
-                <path d="M16 2c3 3 3 7 0 10"/>
-            `)
-        },
-
-        "Shelters": {
-            background: "#1976d2",
-            border: "#0d47a1",
-            icon: whiteIcon(`
-                <path d="M3 11L12 3l9 8"/>
-                <path d="M5 10v11h14V10"/>
-                <path d="M9 21v-7h6v7"/>
-            `)
-        },
-
-        "Cooling Station": {
-            background: "#039be5",
-            border: "#0277bd",
-            icon: whiteIcon(`
-                <path d="M12 2v20M4.5 6.5l15 11M19.5 6.5l-15 11"/>
-                <path d="M12 2l-2 2M12 2l2 2M12 22l-2-2M12 22l2-2"/>
-                <path d="M4.5 6.5l.5 3M4.5 6.5l3 .5"/>
-                <path d="M19.5 17.5l-.5-3M19.5 17.5l-3-.5"/>
-            `)
-        },
-
-        "Medical Supplies": {
-            background: "#d32f2f",
-            border: "#8b0000",
-            icon: whiteIcon(`
-                <path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>
-            `)
-        },
-
-        "Charging": {
-            background: "#f57c00",
-            border: "#e65100",
-            icon: whiteIcon(`
-                <path d="M13 2L5 14h6l-1 8 9-13h-6z"/>
-            `)
-        },
-
-        "Temporary Housing Program": {
-            background: "#00897b",
-            border: "#00695c",
-            icon: whiteIcon(`
-                <path d="M3 11L12 3l9 8"/>
-                <path d="M5 10v11h14V10"/>
-                <path d="M9 21v-7h6v7"/>
-            `)
-        },
-
-        "Rebuilding Support": {
-            background: "#ef6c00",
-            border: "#bf360c",
-            icon: whiteIcon(`
-                <path d="M14 5l5 5"/>
-                <path d="M12 7l5 5"/>
-                <path d="M3 21l10-10"/>
-                <path d="M11 4l3-2 7 7-3 3z"/>
-            `)
-        },
-
-        "Utility Assistance Program": {
-            background: "#7b1fa2",
-            border: "#4a148c",
-            icon: whiteIcon(`
-                <path d="M8 3v6M16 3v6"/>
-                <path d="M6 9h12v3a6 6 0 0 1-12 0z"/>
-                <path d="M12 18v4"/>
-            `)
-        },
-
-        "Restore Louisiana": {
-            background: "#1565c0",
-            border: "#0d47a1",
-            icon: whiteIcon(`
-                <path d="M3 11L12 3l9 8"/>
-                <path d="M5 10v11h14V10"/>
-                <path d="M15 14l4 4"/>
-                <path d="M14 19l5-5"/>
-            `)
-        },
-
-        "Emotional Support": {
-            background: "#c2185b",
-            border: "#880e4f",
-            icon: whiteIcon(`
-                <path d="M12 21S4 16 4 9a4 4 0 0 1 7-2.5A4 4 0 0 1 18 9c0 7-6 12-6 12z"/>
-            `)
-        },
-
-        "FEMA": {
-            background: "#455a64",
-            border: "#263238",
-            icon: whiteIcon(`
-                <path d="M12 2l8 3v6c0 5-3 9-8 11-5-2-8-6-8-11V5z"/>
-                <path d="M8 12l3 3 5-6"/>
-            `)
-        }
-    };
-
-    return categoryStyles[category] || {
-        background: "#757575",
-        border: "#424242",
-        icon: whiteIcon(`
-            <circle cx="12" cy="12" r="3"/>
-        `)
-    };
+    return configuredStyle ?? defaultStyle;
 }
 
   buildInfoWindow(resource) {
