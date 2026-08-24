@@ -11,7 +11,7 @@ const CONFIG = {
     name: "VIA LINK",
     mapTitle: "VIA LINK Disaster Resource Map",
     demoMapTitle: "DEMO - VIA LINK Disaster Resource Map",
-    brandColor: "#800080"
+    brandColor: "#087DC1"
 },
 
     // Google Maps configuration
