@@ -549,3 +549,7 @@ body.demo-mode-active {
         font-size: 22px;
     }
 }
+/* Temporarily hide resource search */
+.resource-search {
+    display: none;
+}
