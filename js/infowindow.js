@@ -203,7 +203,7 @@ class InfoWindowBuilder {
                                 ${
                                     phoneUrl
                                         ? `
-                                            <a href="${phoneUrl}">
+                                            <a href="${phoneUrl}" target="_top">
                                                 Call
                                             </a>
                                         `
