@@ -444,11 +444,6 @@ class ResourceManager {
         rowIndex,
         sheetName
     ) {
-        const latitude =
-            Number(rowData.latitude);
-
-        const longitude =
-            Number(rowData.longitude);
 
         return {
             /*
@@ -474,8 +469,8 @@ class ResourceManager {
             address:
                 rowData.address ?? "",
 
-            latitude,
-            longitude,
+            latitude: rowData.latitude,
+            longitude: rowData.longitude,
 
             parish:
                 rowData.parish ?? "",
